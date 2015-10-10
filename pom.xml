@@ -41,7 +41,7 @@
         <!-- Dependency Versions -->
         <version.jdk>1.8</version.jdk>
         <version.kotlin>0.14.451</version.kotlin>
-        <version.maven>3.2.0</version.maven>
+        <version.maven>3.2.1</version.maven>
         <version.slf4j>1.7.12</version.slf4j>
         <version.spring>4.2.1.RELEASE</version.spring>
     </properties>
@@ -320,6 +320,29 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.jolokia</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.13.5</version>
+                    <configuration>
+                        <images>
+                            <image>
+                                <name>${project.artifactId}</name>
+                                <build>
+                                    <from>jetty:9.3.3-jre8</from>
+                                    <tags>
+                                        <tag>latest</tag>
+                                        <tag>${project.version}</tag>
+                                    </tags>
+                                    <assembly>
+                                        <basedir>/var/lib/jetty/webapps</basedir>
+                                        <descriptorRef>rootWar</descriptorRef>
+                                    </assembly>
+                                </build>
+                            </image>
+                        </images>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
