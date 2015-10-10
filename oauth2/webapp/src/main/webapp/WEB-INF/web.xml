@@ -6,9 +6,18 @@
          metadata-complete="true">
     <display-name>worldbuilder-oauth2</display-name>
 
+
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>
+            org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+        </param-value>
+    </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:/uk/co/grahamcox/worldbuilder/oauth2/webapp/core/config/context.xml</param-value>
+        <param-value>
+            uk.co.grahamcox.worldbuilder.oauth2.spring.CoreContext
+        </param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -20,8 +29,16 @@
             org.springframework.web.servlet.DispatcherServlet
         </servlet-class>
         <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>
+                org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+            </param-value>
+        </init-param>
+        <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>classpath:/uk/co/grahamcox/worldbuilder/oauth2/webapp/webapp/config/context.xml</param-value>
+            <param-value>
+                uk.co.grahamcox.worldbuilder.oauth2.webapp.spring.WebappContext
+            </param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
