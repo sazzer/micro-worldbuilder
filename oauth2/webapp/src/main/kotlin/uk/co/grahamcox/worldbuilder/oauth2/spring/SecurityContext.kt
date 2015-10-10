@@ -34,7 +34,6 @@ open class SecurityContext : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
             .httpBasic()
-            .and().antMatcher("/**")
     }
 
     /**
