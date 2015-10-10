@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import uk.co.grahamcox.worldbuilder.oauth2.client.ClientAuthenticationProvider
 
 /**
  * Configuration for Spring Security
@@ -23,8 +24,7 @@ open class SecurityContext : WebSecurityConfigurerAdapter() {
      */
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth
-            .inMemoryAuthentication()
-                .withUser("bob").password("password").roles("USER")
+            .authenticationProvider(ClientAuthenticationProvider())
     }
 
     /**
