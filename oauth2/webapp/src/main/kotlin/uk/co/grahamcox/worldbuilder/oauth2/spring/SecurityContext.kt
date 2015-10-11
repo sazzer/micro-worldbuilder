@@ -1,5 +1,7 @@
 package uk.co.grahamcox.worldbuilder.oauth2.spring
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -18,6 +20,9 @@ import uk.co.grahamcox.worldbuilder.oauth2.webapp.OAuth2AuthenticationEntryPoint
     securedEnabled = true,
     jsr250Enabled = true)
 open class SecurityContext : WebSecurityConfigurerAdapter() {
+    /** The Object Mapper to use */
+    @Autowired
+    lateinit var objectMapper : ObjectMapper
 
     /**
      * Configure the Authentication Manager
@@ -35,7 +40,7 @@ open class SecurityContext : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
             .httpBasic()
-                .authenticationEntryPoint(OAuth2AuthenticationEntryPoint())
+                .authenticationEntryPoint(OAuth2AuthenticationEntryPoint(objectMapper))
     }
 
     /**
