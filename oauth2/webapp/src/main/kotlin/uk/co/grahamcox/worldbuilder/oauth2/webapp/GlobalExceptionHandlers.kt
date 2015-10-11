@@ -15,8 +15,8 @@ open class GlobalExceptionHandlers {
      * Handle when the Spring Security AccessDeniedException is raised
      */
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException::class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    open fun accessDenied() = "Oops"
+    open fun accessDenied() = mapOf("error" to "unauthorized_client")
 
 }
