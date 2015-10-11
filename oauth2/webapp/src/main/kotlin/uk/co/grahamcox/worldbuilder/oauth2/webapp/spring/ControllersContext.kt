@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import uk.co.grahamcox.worldbuilder.oauth2.webapp.GlobalExceptionHandlers
 import uk.co.grahamcox.worldbuilder.oauth2.webapp.ClientCredentialsGrantController
+import uk.co.grahamcox.worldbuilder.oauth2.webapp.UnsupportedGrantController
 
 /**
  * Context for the actual controllers
@@ -15,10 +16,16 @@ open class ControllersContext {
      */
     @Bean
     open fun globalExceptionHandlers() = GlobalExceptionHandlers()
-    
+
     /**
      * Build the Client Credentials Controller
      */
     @Bean
     open fun clientCredentialsController() = ClientCredentialsGrantController()
+
+    /**
+     * Build the Unsupported Grant Controller
+     */
+    @Bean
+    open fun unsupportedGrantController() = UnsupportedGrantController()
 }

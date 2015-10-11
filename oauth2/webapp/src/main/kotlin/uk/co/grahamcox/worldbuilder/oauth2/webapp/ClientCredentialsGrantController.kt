@@ -2,6 +2,7 @@ package uk.co.grahamcox.worldbuilder.oauth2.webapp
 
 import org.slf4j.LoggerFactory
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -27,6 +28,8 @@ open class ClientCredentialsGrantController {
     @ResponseBody
     @Secured("ROLE_USER")
     open fun token(@RequestParam(value = "scopes", required = false, defaultValue = "*") scopes: Scopes) {
-        LOG.debug("Performing Client Credentials grant for scopes {}", scopes)
+        LOG.debug("Performing Client Credentials grant for scopes {} and client {}",
+            scopes,
+            SecurityContextHolder.getContext())
     }
 }
