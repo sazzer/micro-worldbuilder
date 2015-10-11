@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import uk.co.grahamcox.worldbuilder.oauth2.client.ClientAuthenticationProvider
+import uk.co.grahamcox.worldbuilder.oauth2.webapp.OAuth2AuthenticationEntryPoint
 
 /**
  * Configuration for Spring Security
@@ -34,6 +35,7 @@ open class SecurityContext : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
             .httpBasic()
+                .authenticationEntryPoint(OAuth2AuthenticationEntryPoint())
     }
 
     /**
