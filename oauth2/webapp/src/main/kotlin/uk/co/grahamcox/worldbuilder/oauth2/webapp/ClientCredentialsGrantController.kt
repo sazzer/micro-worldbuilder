@@ -21,15 +21,22 @@ open class ClientCredentialsGrantController {
     /**
      * Handler for the Client Credentials Grant
      * @param scopes the scopes to request for the grant
+     * @return the access token
      */
     @RequestMapping(value = "/token",
         method = arrayOf(RequestMethod.GET, RequestMethod.POST),
         params = arrayOf("grant_type=client_credentials"))
     @ResponseBody
     @Secured("ROLE_USER")
-    open fun token(@RequestParam(value = "scopes", required = false, defaultValue = "*") scopes: Scopes) {
+    open fun token(@RequestParam(value = "scopes", required = false, defaultValue = "*") scopes: Scopes) : AccessTokenResponse {
         LOG.debug("Performing Client Credentials grant for scopes {} and client {}",
             scopes,
             SecurityContextHolder.getContext())
+
+        return AccessTokenResponse(token = "abcdef",
+            refreshToken = "123456",
+            expires = 3600,
+            scope = scopes.toString(),
+            type = "Bearer")
     }
 }
