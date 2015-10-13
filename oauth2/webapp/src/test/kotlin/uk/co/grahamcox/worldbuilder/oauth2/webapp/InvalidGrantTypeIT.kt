@@ -36,8 +36,9 @@ open class InvalidGrantTypeIT {
         mockMvc.perform(MockMvcRequestBuilders.post("/token")
             .param("grant_type", "incorrect")
             .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("error").value("unsupported_grant_type"))
     }
 
     /**
@@ -47,8 +48,9 @@ open class InvalidGrantTypeIT {
     @Test
     fun testTokenMissingGrantType() {
         mockMvc.perform(MockMvcRequestBuilders.post("/token")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("error").value("invalid_request"))
     }
 }
