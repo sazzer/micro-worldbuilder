@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import uk.co.grahamcox.worldbuilder.oauth2.client.ClientAuthenticationProvider
+import uk.co.grahamcox.worldbuilder.oauth2.client.dao.ClientDao
 import uk.co.grahamcox.worldbuilder.oauth2.webapp.OAuth2AuthenticationEntryPoint
 
 /**
@@ -30,7 +31,7 @@ open class SecurityContext : WebSecurityConfigurerAdapter() {
      */
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth
-            .authenticationProvider(ClientAuthenticationProvider())
+            .authenticationProvider(ClientAuthenticationProvider(ClientDao()))
     }
 
     /**
