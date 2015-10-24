@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Profile
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import uk.co.grahamcox.worldbuilder.auth.spring.CoreContext
 import uk.co.grahamcox.worldbuilder.auth.webapp.spring.WebappContext
+import java.time.Clock
 
 /**
  * The Spring context to use for integration testing the app
@@ -22,4 +24,12 @@ open class TestContext {
     /** The MockMVC bean */
     @Bean
     open fun mockMvc() = MockMvcBuilders.webAppContextSetup(webApplicationContext).build()
+
+    /**
+     * Configure the clock to use
+     */
+    @Bean(name = arrayOf("clock"))
+    @Profile("test")
+    open fun clock() = MutableClock()
+
 }

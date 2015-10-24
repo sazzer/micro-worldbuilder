@@ -17,5 +17,6 @@ open class DebugControllerIT : IntegrationTestBase() {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/debug/now"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+                .andExpect(MockMvcResultMatchers.content().string("2015-10-24T22:38:00Z"))
     }
 }
