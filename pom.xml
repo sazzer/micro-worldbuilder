@@ -19,6 +19,7 @@
         <maven>${version.maven}</maven>
     </prerequisites>
     <modules>
+        <module>auth</module>
     </modules>
     <scm>
         <connection>scm:git:https://github.com/sazzer/micro-worldbuilder.git</connection>
