@@ -15,7 +15,8 @@ class ClientCredentialsController {
     /**
      * Actually issue the Client Credentials Grant token
      */
-    @RequestMapping("/token")
+    @RequestMapping(value = "/token",
+            params = arrayOf("grant_type=client_credentials"))
     @ResponseBody
     fun token() = AccessTokenResponse("abcdef", "Bearer", 3600)
 }
