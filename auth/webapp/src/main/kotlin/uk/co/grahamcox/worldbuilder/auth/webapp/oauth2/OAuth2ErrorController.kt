@@ -1,6 +1,7 @@
 package uk.co.grahamcox.worldbuilder.auth.webapp.oauth2
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
@@ -17,7 +18,15 @@ class OAuth2ErrorController {
      */
     @ExceptionHandler(OAuth2Exception::class)
     @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    fun handleOAuth2Error(e : OAuth2Exception) = mapOf("error" to e.errorCode,
-            "message" to e.message)
+    fun handleOAuth2Error(e : OAuth2Exception): ResponseEntity<Map<String, String?>> {
+        val statusCode = when (e) {
+            is OAuth2InvalidClientException -> HttpStatus.UNAUTHORIZED
+            else -> HttpStatus.BAD_REQUEST
+        }
+
+        val payload = mapOf("error" to e.errorCode,
+                "message" to e.message)
+
+        return ResponseEntity(payload, statusCode)
+    }
 }

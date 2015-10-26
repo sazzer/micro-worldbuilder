@@ -29,6 +29,10 @@ class ClientCredentialsController {
     @ResponseBody
     fun token(@RequestParam(value = "scopes", required = false, defaultValue = "*") scopes: Scopes,
               clientCredentials: ClientCredentials?): AccessTokenResponse {
+        if (clientCredentials == null) {
+            throw OAuth2InvalidClientException()
+        }
+
         LOG.debug("Client Credentials: {}", clientCredentials)
         LOG.debug("Scopes: {}", scopes)
 
