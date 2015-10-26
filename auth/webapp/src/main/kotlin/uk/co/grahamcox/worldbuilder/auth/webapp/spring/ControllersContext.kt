@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration
 import uk.co.grahamcox.worldbuilder.auth.webapp.DebugController
 import uk.co.grahamcox.worldbuilder.auth.webapp.oauth2.BadTokenController
 import uk.co.grahamcox.worldbuilder.auth.webapp.oauth2.ClientCredentialsController
+import uk.co.grahamcox.worldbuilder.auth.webapp.oauth2.OAuth2ErrorController
 import java.time.Clock
 
 /**
@@ -19,6 +20,13 @@ open class ControllersContext {
     @Bean
     @Autowired
     open fun debugController(clock: Clock) = DebugController(clock)
+
+    /**
+     * Construct the OAuth2 Error Controller
+     */
+    @Bean
+    @Autowired
+    open fun oauth2ErrorController() = OAuth2ErrorController()
 
     /**
      * Construct the Bad Token Controller
