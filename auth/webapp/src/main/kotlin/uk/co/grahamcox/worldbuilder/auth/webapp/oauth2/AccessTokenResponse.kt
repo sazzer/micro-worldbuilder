@@ -14,13 +14,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonInclude(JsonInclude.Include.NON_NULL)
 class AccessTokenResponse(accessTokenValue: String,
                                tokenTypeValue: String,
-                               expiresValue: Int,
+                               expiresValue: Long,
                                scopesValue: String,
                                refreshTokenValue: String? = null) {
 
     @JsonProperty("access_token") var accessToken: String = accessTokenValue
     @JsonProperty("token_type") val tokenType: String = tokenTypeValue
-    @JsonProperty("expires_in") val expires: Int = expiresValue
+    @JsonProperty("expires_in") val expires: Long = expiresValue
     @JsonProperty("scopes") val scopes: String = scopesValue
     @JsonProperty("refresh_token") val refreshToken: String? = refreshTokenValue
 }

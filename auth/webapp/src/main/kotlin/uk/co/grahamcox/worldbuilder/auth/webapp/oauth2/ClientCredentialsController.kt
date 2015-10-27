@@ -9,15 +9,22 @@ import org.springframework.web.bind.annotation.ResponseBody
 import uk.co.grahamcox.worldbuilder.auth.oauth2.Scopes
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.ClientId
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.ClientLoader
+import uk.co.grahamcox.worldbuilder.auth.oauth2.token.AccessTokenIssuer
+import java.time.Clock
+import java.time.Duration
 
 /**
  * Controller for issuing Client Credentials Grant tokens
+ * @param clock The clock to use
  * @param loader Mechanism to load Client Details
+ * @param accessTokenIssuer Mechanism to issue Access Tokens
  */
 @Controller
 @RequestMapping(value = "/api/oauth2",
         method = arrayOf(RequestMethod.GET, RequestMethod.POST))
-class ClientCredentialsController(private val loader : ClientLoader) {
+class ClientCredentialsController(private val clock: Clock,
+                                  private val loader : ClientLoader,
+                                  private val accessTokenIssuer: AccessTokenIssuer) {
     /** The logger to use */
     private val LOG = LoggerFactory.getLogger(ClientCredentialsController::class.java)
 
@@ -45,14 +52,17 @@ class ClientCredentialsController(private val loader : ClientLoader) {
         }
         LOG.debug("Client: {}", client)
 
-        // 3. Get the user details of the user to act on behalf of
-        // 4. Generate the access token to use
-        // 5. Return it to the client
-        LOG.debug("Scopes: {}", scopes)
+        // 3. Generate the access token to use
+        val accessToken = accessTokenIssuer.issue(client, scopes)
 
-        return AccessTokenResponse(accessTokenValue = client.id.id,
+        // 4. Return it to the client
+        val now = clock.instant()
+        val expiryTime = Duration.between(now, accessToken.expires)
+
+        return AccessTokenResponse(accessTokenValue = accessToken.id.id,
+                refreshTokenValue = accessToken.refreshToken.id,
                 tokenTypeValue = "Bearer",
-                expiresValue = 3600,
-                scopesValue = scopes.toString())
+                expiresValue = expiryTime.seconds,
+                scopesValue = accessToken.scopes.toString())
     }
 }

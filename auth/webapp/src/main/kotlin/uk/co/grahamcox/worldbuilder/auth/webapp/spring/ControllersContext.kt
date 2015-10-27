@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.ClientLoader
+import uk.co.grahamcox.worldbuilder.auth.oauth2.token.AccessTokenIssuer
 import uk.co.grahamcox.worldbuilder.auth.webapp.DebugController
 import uk.co.grahamcox.worldbuilder.auth.webapp.oauth2.BadTokenController
 import uk.co.grahamcox.worldbuilder.auth.webapp.oauth2.ClientCredentialsController
@@ -41,5 +42,7 @@ open class ControllersContext {
      */
     @Bean
     @Autowired
-    open fun clientCredentialsController() = ClientCredentialsController(ClientLoader())
+    open fun clientCredentialsController(clock: Clock) = ClientCredentialsController(clock,
+            ClientLoader(),
+            AccessTokenIssuer())
 }

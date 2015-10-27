@@ -9,11 +9,13 @@ import java.time.Instant
  * @param updated When the Client was last modified
  * @param secret The secret for the client
  * @param name The name of the client
+ * @param owner The User that owns the Client Details
  */
 class ClientDetails(val id: ClientId,
                     val created: Instant,
                     val updated: Instant,
                     val secret: ClientSecret,
-                    val name: String) {
+                    val name: String,
+                    val owner: UserId) {
 
 }
