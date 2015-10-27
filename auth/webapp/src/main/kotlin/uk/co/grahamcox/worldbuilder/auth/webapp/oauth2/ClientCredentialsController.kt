@@ -39,7 +39,10 @@ class ClientCredentialsController(private val loader : ClientLoader) {
 
         // 2. Ensure that the credentials refer to a client that is valid and allowed to request this token
         val client = loader.loadClientById(ClientId(clientCredentials.clientId))
-                ?: throw OAuth2InvalidClientException("The provided client credentials were invalid")
+
+        if (client == null || !client.secret.compare(clientCredentials.clientSecret)) {
+            throw OAuth2InvalidClientException("The provided client credentials were invalid")
+        }
         LOG.debug("Client: {}", client)
 
         // 3. Get the user details of the user to act on behalf of
@@ -47,7 +50,7 @@ class ClientCredentialsController(private val loader : ClientLoader) {
         // 5. Return it to the client
         LOG.debug("Scopes: {}", scopes)
 
-        return AccessTokenResponse(accessTokenValue = "abcdef",
+        return AccessTokenResponse(accessTokenValue = client.id.id,
                 tokenTypeValue = "Bearer",
                 expiresValue = 3600,
                 scopesValue = scopes.toString())
