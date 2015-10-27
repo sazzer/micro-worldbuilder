@@ -1,6 +1,13 @@
 package uk.co.grahamcox.worldbuilder.auth.oauth2.client
 
+import java.security.MessageDigest
 import java.util.*
+
+/** The hash algorithm to use */
+private val HASH_ALGORITHM = "SHA-256"
+
+/** The charset to use for the hashed password */
+private val CHARSET = Charsets.UTF_8
 
 /**
  * Representation of a hashed secret
@@ -16,7 +23,13 @@ data class ClientSecret(val hash: String, val salt: String) {
          * @return the hashed secret
          */
         fun hash(secret: String, salt: String = UUID.randomUUID().toString()): ClientSecret {
-            return ClientSecret(secret, salt)
+            val md = MessageDigest.getInstance(HASH_ALGORITHM)
+            md.update(salt.toByteArray(CHARSET))
+            md.update(secret.toByteArray(CHARSET))
+            val hash = md.digest()
+
+            val encodedHash = Base64.getEncoder().encodeToString(hash)
+            return ClientSecret(encodedHash, salt)
         }
     }
 
