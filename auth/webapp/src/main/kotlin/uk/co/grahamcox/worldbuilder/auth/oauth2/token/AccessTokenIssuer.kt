@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.impl.crypto.MacProvider
 import uk.co.grahamcox.worldbuilder.auth.oauth2.Scopes
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.ClientDetails
+import uk.co.grahamcox.worldbuilder.auth.oauth2.client.UserId
 import java.time.Clock
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -38,13 +39,37 @@ class AccessTokenIssuer(private val clock: Clock,
                 .setNotBefore(Date.from(issuedAt))
                 .setIssuedAt(Date.from(issuedAt))
                 .setId(tokenId)
-                .claim("scopes", scopes.scopes)
+                .claim("scopes", scopes.toString())
                 .signWith(SignatureAlgorithm.HS512, key)
                 .compact()
 
         return AccessToken(
                 id = AccessTokenId(accessTokenId),
                 refreshToken = RefreshTokenId(UUID.randomUUID().toString()),
+                expires = expiresAt,
+                scopes = scopes
+        )
+    }
+
+    /**
+     * Rebuild an Access Token from the provided ID.
+     * Note that it is not possible to get the Refresh Token back this way
+     * @param accessToken The Access Token to parse
+     * @return the token
+     */
+    fun parse(accessToken: AccessTokenId) : AccessToken {
+        val jwt = Jwts.parser()
+                .setSigningKey(key)
+                .requireIssuer(AccessTokenIssuer::class.qualifiedName)
+                .parseClaimsJws(accessToken.id)
+
+        val user = UserId(jwt.body.subject)
+        val expiresAt = jwt.body.expiration.toInstant()
+        val scopes = Scopes(jwt.body.get("scopes", String::class.java))
+
+        return AccessToken(
+                id = accessToken,
+                refreshToken = null,
                 expires = expiresAt,
                 scopes = scopes
         )

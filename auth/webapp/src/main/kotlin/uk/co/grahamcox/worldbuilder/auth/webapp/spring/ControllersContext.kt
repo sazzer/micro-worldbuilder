@@ -53,5 +53,6 @@ open class ControllersContext {
      */
     @Bean
     @Autowired
-    open fun verifyTokenController() = VerifyTokenController()
+    open fun verifyTokenController(accessTokenIssuer: AccessTokenIssuer) =
+            VerifyTokenController(accessTokenIssuer)
 }

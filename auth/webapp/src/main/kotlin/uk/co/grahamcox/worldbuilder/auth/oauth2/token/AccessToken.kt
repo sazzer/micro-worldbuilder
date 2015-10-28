@@ -11,6 +11,6 @@ import java.time.Instant
  * @param scopes The scopes of the Access Token
  */
 data class AccessToken(val id: AccessTokenId,
-                       val refreshToken: RefreshTokenId,
+                       val refreshToken: RefreshTokenId?,
                        val expires: Instant,
                        val scopes: Scopes)
