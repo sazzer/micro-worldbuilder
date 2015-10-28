@@ -1,8 +1,8 @@
 package uk.co.grahamcox.worldbuilder.auth.oauth2.token
 
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.*
 import io.jsonwebtoken.impl.crypto.MacProvider
+import org.slf4j.LoggerFactory
 import uk.co.grahamcox.worldbuilder.auth.oauth2.Scopes
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.ClientDetails
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.UserId
@@ -19,7 +19,11 @@ import javax.crypto.SecretKey
  */
 class AccessTokenIssuer(private val clock: Clock,
                         private val key: SecretKey) {
+    /** The time for an access token to expire */
+    private val EXPIRY = 36L
 
+    /** The logger to use */
+    private val LOG = LoggerFactory.getLogger(AccessTokenIssuer::class.java)
     /**
      * Issue an Access Token suitable for the given Client, using the Owning User as the user the token applies to
      * @param client The client issuing the token
@@ -29,7 +33,8 @@ class AccessTokenIssuer(private val clock: Clock,
     fun issue(client: ClientDetails, scopes: Scopes) : AccessToken {
         val tokenId = UUID.randomUUID().toString()
         val issuedAt = clock.instant()
-        val expiresAt = issuedAt.plusSeconds(3600)
+        val expiresAt = issuedAt.plusSeconds(EXPIRY)
+        LOG.debug("Issuing an access token for a client. Client={}, Expiry={}", client, expiresAt)
 
         val accessTokenId = Jwts.builder()
                 .setIssuer(AccessTokenIssuer::class.qualifiedName)
@@ -58,20 +63,35 @@ class AccessTokenIssuer(private val clock: Clock,
      * @return the token
      */
     fun parse(accessToken: AccessTokenId) : AccessToken {
-        val jwt = Jwts.parser()
-                .setSigningKey(key)
-                .requireIssuer(AccessTokenIssuer::class.qualifiedName)
-                .parseClaimsJws(accessToken.id)
+        try {
+            LOG.debug("Parsing an access token: {}", accessToken)
+            val jwt = Jwts.parser()
+                    .setSigningKey(key)
+                    .requireIssuer(AccessTokenIssuer::class.qualifiedName)
+                    .parseClaimsJws(accessToken.id)
 
-        val user = UserId(jwt.body.subject)
-        val expiresAt = jwt.body.expiration.toInstant()
-        val scopes = Scopes(jwt.body.get("scopes", String::class.java))
+            val user = UserId(jwt.body.subject)
+            val expiresAt = jwt.body.expiration.toInstant()
+            val scopes = Scopes(jwt.body.get("scopes", String::class.java))
 
-        return AccessToken(
-                id = accessToken,
-                refreshToken = null,
-                expires = expiresAt,
-                scopes = scopes
-        )
+            return AccessToken(
+                    id = accessToken,
+                    refreshToken = null,
+                    expires = expiresAt,
+                    scopes = scopes
+            )
+        } catch (e: MalformedJwtException) {
+            LOG.warn("Access token was malformed: {}", accessToken, e)
+            throw MalformedAccessTokenException()
+        } catch (e: SignatureException) {
+            LOG.warn("Signature was invalid: {}", accessToken, e)
+            throw MalformedAccessTokenException()
+        } catch (e: UnsupportedJwtException) {
+            LOG.warn("Access token was unsupported: {}", accessToken, e)
+            throw MalformedAccessTokenException()
+        } catch (e: ExpiredJwtException) {
+            LOG.warn("Access token was expired: {}", accessToken, e)
+            throw ExpiredAccessTokenException()
+        }
     }
 }
