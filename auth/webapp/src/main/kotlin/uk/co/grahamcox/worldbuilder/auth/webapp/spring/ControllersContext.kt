@@ -44,5 +44,5 @@ open class ControllersContext {
     @Autowired
     open fun clientCredentialsController(clock: Clock) = ClientCredentialsController(clock,
             ClientLoader(),
-            AccessTokenIssuer())
+            AccessTokenIssuer(clock))
 }

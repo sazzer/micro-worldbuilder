@@ -60,7 +60,6 @@ class ClientCredentialsController(private val clock: Clock,
         val expiryTime = Duration.between(now, accessToken.expires)
 
         return AccessTokenResponse(accessTokenValue = accessToken.id.id,
-                refreshTokenValue = accessToken.refreshToken.id,
                 tokenTypeValue = "Bearer",
                 expiresValue = expiryTime.seconds,
                 scopesValue = accessToken.scopes.toString())
