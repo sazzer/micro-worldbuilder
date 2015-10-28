@@ -9,6 +9,7 @@ import uk.co.grahamcox.worldbuilder.auth.webapp.DebugController
 import uk.co.grahamcox.worldbuilder.auth.webapp.oauth2.BadTokenController
 import uk.co.grahamcox.worldbuilder.auth.webapp.oauth2.ClientCredentialsController
 import uk.co.grahamcox.worldbuilder.auth.webapp.oauth2.OAuth2ErrorController
+import uk.co.grahamcox.worldbuilder.auth.webapp.oauth2.VerifyTokenController
 import java.time.Clock
 
 /**
@@ -45,4 +46,11 @@ open class ControllersContext {
     open fun clientCredentialsController(clock: Clock) = ClientCredentialsController(clock,
             ClientLoader(),
             AccessTokenIssuer(clock))
+
+    /**
+     * Construct the Verify Token Controller
+     */
+    @Bean
+    @Autowired
+    open fun verifyTokenController() = VerifyTokenController()
 }
