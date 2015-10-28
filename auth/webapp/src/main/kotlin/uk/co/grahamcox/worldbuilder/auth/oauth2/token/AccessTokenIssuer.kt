@@ -9,13 +9,15 @@ import java.time.Clock
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.*
+import javax.crypto.SecretKey
 
 /**
  * Mechanism to issue access tokens
+ * @param clock The clock to use
+ * @param key The secret key to use for signing the tokens
  */
-class AccessTokenIssuer(private val clock: Clock) {
-    /** JWT Signing Key */
-    private val key = MacProvider.generateKey()
+class AccessTokenIssuer(private val clock: Clock,
+                        private val key: SecretKey) {
 
     /**
      * Issue an Access Token suitable for the given Client, using the Owning User as the user the token applies to

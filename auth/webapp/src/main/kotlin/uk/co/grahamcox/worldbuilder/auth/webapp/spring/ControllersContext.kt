@@ -43,9 +43,10 @@ open class ControllersContext {
      */
     @Bean
     @Autowired
-    open fun clientCredentialsController(clock: Clock) = ClientCredentialsController(clock,
-            ClientLoader(),
-            AccessTokenIssuer(clock))
+    open fun clientCredentialsController(clock: Clock,
+                                         clientLoader: ClientLoader,
+                                         accessTokenIssuer: AccessTokenIssuer) =
+            ClientCredentialsController(clock, clientLoader, accessTokenIssuer)
 
     /**
      * Construct the Verify Token Controller
