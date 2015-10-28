@@ -51,8 +51,10 @@ class AccessTokenIssuer(private val clock: Clock,
         return AccessToken(
                 id = AccessTokenId(accessTokenId),
                 refreshToken = RefreshTokenId(UUID.randomUUID().toString()),
+                issued = issuedAt,
                 expires = expiresAt,
-                scopes = scopes
+                scopes = scopes,
+                userId = client.owner
         )
     }
 
@@ -72,13 +74,16 @@ class AccessTokenIssuer(private val clock: Clock,
 
             val user = UserId(jwt.body.subject)
             val expiresAt = jwt.body.expiration.toInstant()
+            val issuedAt = jwt.body.issuedAt.toInstant()
             val scopes = Scopes(jwt.body.get("scopes", String::class.java))
 
             return AccessToken(
                     id = accessToken,
                     refreshToken = null,
                     expires = expiresAt,
-                    scopes = scopes
+                    issued = issuedAt,
+                    scopes = scopes,
+                    userId = user
             )
         } catch (e: MalformedJwtException) {
             LOG.warn("Access token was malformed: {}", accessToken, e)
