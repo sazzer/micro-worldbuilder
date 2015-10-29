@@ -32,11 +32,20 @@ class VerifyTokenController(private val accessTokenIssuer: AccessTokenIssuer) {
 
     /**
      * Verify the provided Access Token is indeed valid, and if so return the details of it
-     * @param accessToken the Access Token to verify
+     * @param accessTokenId the Access Token to verify
      * @return the access token details
      */
     @RequestMapping("/verify")
     @ResponseBody
-    fun verifyToken(@RequestParam("token") accessToken: AccessTokenId)
-        = accessTokenIssuer.parse(accessToken)
+    fun verifyToken(@RequestParam("token") accessTokenId: AccessTokenId): AccessTokenDetailResponse {
+        val accessToken = accessTokenIssuer.parse(accessTokenId)
+        return AccessTokenDetailResponse(
+                accessTokenValue = accessToken.id.id,
+                clientIdValue = accessToken.clientId.id,
+                issuedValue = accessToken.issued,
+                expiresValue = accessToken.expires,
+                scopesValue = accessToken.scopes.scopes,
+                userValue = accessToken.userId.id
+        )
+    }
 }

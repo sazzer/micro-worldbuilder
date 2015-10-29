@@ -5,6 +5,7 @@ import io.jsonwebtoken.impl.crypto.MacProvider
 import org.slf4j.LoggerFactory
 import uk.co.grahamcox.worldbuilder.auth.oauth2.Scopes
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.ClientDetails
+import uk.co.grahamcox.worldbuilder.auth.oauth2.client.ClientId
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.UserId
 import java.time.Clock
 import java.time.ZoneOffset
@@ -50,6 +51,7 @@ class AccessTokenIssuer(private val clock: Clock,
 
         return AccessToken(
                 id = AccessTokenId(accessTokenId),
+                clientId = client.id,
                 refreshToken = RefreshTokenId(UUID.randomUUID().toString()),
                 issued = issuedAt,
                 expires = expiresAt,
@@ -76,9 +78,11 @@ class AccessTokenIssuer(private val clock: Clock,
             val expiresAt = jwt.body.expiration.toInstant()
             val issuedAt = jwt.body.issuedAt.toInstant()
             val scopes = Scopes(jwt.body.get("scopes", String::class.java))
+            val clientId = ClientId(jwt.body.audience)
 
             return AccessToken(
                     id = accessToken,
+                    clientId = clientId,
                     refreshToken = null,
                     expires = expiresAt,
                     issued = issuedAt,

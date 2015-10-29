@@ -1,12 +1,14 @@
 package uk.co.grahamcox.worldbuilder.auth.oauth2.token
 
 import uk.co.grahamcox.worldbuilder.auth.oauth2.Scopes
+import uk.co.grahamcox.worldbuilder.auth.oauth2.client.ClientId
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.UserId
 import java.time.Instant
 
 /**
  * Representation of an actual Access Token
  * @param id The ID of the Access Token
+ * @param clientId The Client ID of the Access Token
  * @param refreshToken The Refresh Token for the Access Token
  * @param issued When the Access Token was issued
  * @param expires When the Access Token expires
@@ -14,6 +16,7 @@ import java.time.Instant
  * @param userId The User ID that the Access Token is for
  */
 data class AccessToken(val id: AccessTokenId,
+                       val clientId: ClientId,
                        val refreshToken: RefreshTokenId?,
                        val issued: Instant,
                        val expires: Instant,
