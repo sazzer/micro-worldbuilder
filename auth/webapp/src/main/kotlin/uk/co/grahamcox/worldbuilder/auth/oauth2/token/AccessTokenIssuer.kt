@@ -9,19 +9,19 @@ import uk.co.grahamcox.worldbuilder.auth.oauth2.client.UserId
 import java.time.Clock
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.crypto.SecretKey
 
 /**
  * Mechanism to issue access tokens
  * @param clock The clock to use
+ * @param expiryTime How long until access tokens expire
  * @param key The secret key to use for signing the tokens
  */
 class AccessTokenIssuer(private val clock: Clock,
+                        private val expiryTime: Long,
                         private val key: SecretKey) {
-    /** The time for an access token to expire */
-    private val EXPIRY = 36L
-
     /** The logger to use */
     private val LOG = LoggerFactory.getLogger(AccessTokenIssuer::class.java)
     /**
@@ -32,8 +32,8 @@ class AccessTokenIssuer(private val clock: Clock,
      */
     fun issue(client: ClientDetails, scopes: Scopes) : AccessToken {
         val tokenId = UUID.randomUUID().toString()
-        val issuedAt = clock.instant()
-        val expiresAt = issuedAt.plusSeconds(EXPIRY)
+        val issuedAt = clock.instant().truncatedTo(ChronoUnit.SECONDS)
+        val expiresAt = issuedAt.plusSeconds(expiryTime)
         LOG.debug("Issuing an access token for a client. Client={}, Expiry={}", client, expiresAt)
 
         val accessTokenId = Jwts.builder()

@@ -11,6 +11,9 @@ import javax.crypto.SecretKey
  * Spring Context for working with Tokens
  */
 open class TokenContext {
+    /** The time for an access token to expire */
+    private val EXPIRY = 3600L
+
     /**
      * The secret key used for signing Access Tokens
      */
@@ -22,5 +25,6 @@ open class TokenContext {
      */
     @Bean
     @Autowired
-    fun accessTokenIssuer(clock: Clock, key: SecretKey) = AccessTokenIssuer(clock, key)
+    fun accessTokenIssuer(clock: Clock, key: SecretKey) =
+            AccessTokenIssuer(clock, EXPIRY, key)
 }
