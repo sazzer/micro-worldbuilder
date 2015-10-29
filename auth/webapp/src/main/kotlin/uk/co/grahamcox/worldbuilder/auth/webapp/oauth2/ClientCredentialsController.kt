@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import uk.co.grahamcox.worldbuilder.auth.oauth2.Scopes
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.ClientId
 import uk.co.grahamcox.worldbuilder.auth.oauth2.client.ClientLoader
+import uk.co.grahamcox.worldbuilder.auth.oauth2.client.UnknownClientException
 import uk.co.grahamcox.worldbuilder.auth.oauth2.token.AccessTokenIssuer
 import java.time.Clock
 import java.time.Duration
@@ -45,9 +46,13 @@ class ClientCredentialsController(private val clock: Clock,
         }
 
         // 2. Ensure that the credentials refer to a client that is valid and allowed to request this token
-        val client = loader.loadClientById(ClientId(clientCredentials.clientId))
+        val client = try {
+            loader.loadClientById(ClientId(clientCredentials.clientId))
+        } catch (e : UnknownClientException) {
+            throw OAuth2InvalidClientException("The provided client credentials were invalid")
+        }
 
-        if (client == null || !client.secret.compare(clientCredentials.clientSecret)) {
+        if (!client.secret.compare(clientCredentials.clientSecret)) {
             throw OAuth2InvalidClientException("The provided client credentials were invalid")
         }
         LOG.debug("Client: {}", client)
